@@ -14,8 +14,26 @@ def add_task_prompt():
     add_task(task_name)
 
 def view_tasks():
-    for task in tasks:
-        print(task)
+    for task_id, task_name in enumerate(tasks):
+        print(f'[{task_id}] {task_name}')
+
+def swap_tasks(task_1_index, task_2_index):
+    task_1_valid = task_1_index >= 0 and task_1_index < len(tasks)
+    task_2_valid = task_2_index >= 0 and task_2_index < len(tasks)
+
+    if task_1_valid and task_2_valid:
+        temp_task = tasks[task_1_index]
+        tasks[task_1_index] = tasks[task_2_index]
+        tasks[task_2_index] = temp_task
+
+def swap_tasks_prompt():
+    try:
+        task_1 = int(input(f'task 1{EDIT_PROMPT}').strip())
+        task_2 = int(input(f'task 2{EDIT_PROMPT}').strip())
+    except:
+        print('task numbers were invalid')
+
+    swap_tasks(task_1, task_2)
 
 def help():
     print("Normal mode commands:")
@@ -71,7 +89,11 @@ def edit_command(command_input):
         pass
 
 normal_commands = {'help':help, 'view':view_tasks, 'edit':edit_mode}
-edit_commands = {'help':help, 'add':add_task_prompt, 'view':view_tasks, 'normal':normal_mode}
+edit_commands = {'help':help,
+                 'add':add_task_prompt,
+                 'view':view_tasks,
+                 'normal':normal_mode,
+                 'swap':swap_tasks_prompt}
 
 if __name__ == '__main__':
     normal_mode()
