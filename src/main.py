@@ -40,6 +40,7 @@ def tick_task(task_index):
 
     if task_valid:
         tasks[task_index] = "[DONE] " + tasks[task_index]
+        swap_tasks(task_index, len(tasks)-1)
 
 def tick_task_prompt():
     task_index = int(input(f'[task index]{NORMAL_PROMPT}').strip())
