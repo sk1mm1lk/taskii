@@ -10,7 +10,7 @@ def add_task(task_name):
     tasks.append(task_name)
 
 def add_task_prompt():
-    task_name = input(f'[task name]{EDIT_PROMPT}')
+    task_name = input(f'[task name]{EDIT_PROMPT}').strip()
     add_task(task_name)
 
 def view_tasks():
@@ -34,6 +34,16 @@ def swap_tasks_prompt():
         print('task numbers were invalid')
 
     swap_tasks(task_1, task_2)
+
+def tick_task(task_index):
+    task_valid = task_index >= 0 and task_index < len(tasks)
+
+    if task_valid:
+        tasks[task_index] = "[DONE] " + tasks[task_index]
+
+def tick_task_prompt():
+    task_index = int(input(f'[task index]{NORMAL_PROMPT}').strip())
+    tick_task(task_index)
 
 def help():
     print("Normal mode commands:")
@@ -88,12 +98,15 @@ def edit_command(command_input):
     except KeyError:
         pass
 
-normal_commands = {'help':help, 'view':view_tasks, 'edit':edit_mode}
-edit_commands = {'help':help,
-                 'add':add_task_prompt,
-                 'view':view_tasks,
-                 'normal':normal_mode,
-                 'swap':swap_tasks_prompt}
+normal_commands = {'help':help,
+                   'view':view_tasks,
+                   'edit':edit_mode,
+                   'tick':tick_task_prompt}
+edit_commands   = {'help':help,
+                   'add':add_task_prompt,
+                   'view':view_tasks,
+                   'normal':normal_mode,
+                   'swap':swap_tasks_prompt}
 
 if __name__ == '__main__':
     normal_mode()
