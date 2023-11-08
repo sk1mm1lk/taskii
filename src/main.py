@@ -28,8 +28,8 @@ def swap_tasks(task_1_index, task_2_index):
 
 def swap_tasks_prompt():
     try:
-        task_1 = int(input(f'task 1{EDIT_PROMPT}').strip())
-        task_2 = int(input(f'task 2{EDIT_PROMPT}').strip())
+        task_1 = int(input(f'[task 1]{EDIT_PROMPT}').strip())
+        task_2 = int(input(f'[task 2]{EDIT_PROMPT}').strip())
     except:
         print('task numbers were invalid')
 
@@ -45,6 +45,28 @@ def tick_task(task_index):
 def tick_task_prompt():
     task_index = int(input(f'[task index]{NORMAL_PROMPT}').strip())
     tick_task(task_index)
+
+def save(file_name):
+    tasks_string = ''
+
+    for task in tasks:
+        tasks_string = tasks_string + task + '\n'
+
+    with open(file_name, 'w') as file:
+        file.write(tasks_string)
+
+def save_prompt():
+    file_name = input(f'[file name]{NORMAL_PROMPT}').strip()
+
+    save(file_name)
+
+def save_and_quit(file_name):
+    save(file_name)
+    quit()
+
+def save_and_quit_prompt():
+    save_prompt()
+    quit()
 
 def help():
     print("Normal mode commands:")
@@ -102,12 +124,16 @@ def edit_command(command_input):
 normal_commands = {'help':help,
                    'view':view_tasks,
                    'edit':edit_mode,
-                   'tick':tick_task_prompt}
+                   'tick':tick_task_prompt,
+                   'save':save_prompt,
+                   'wq':save_and_quit_prompt}
 edit_commands   = {'help':help,
                    'add':add_task_prompt,
                    'view':view_tasks,
                    'normal':normal_mode,
-                   'swap':swap_tasks_prompt}
+                   'swap':swap_tasks_prompt,
+                   'save':save_prompt,
+                   'wq':save_and_quit_prompt}
 
 if __name__ == '__main__':
     normal_mode()
