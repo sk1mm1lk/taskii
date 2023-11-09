@@ -13,6 +13,21 @@ def add_task_prompt():
     task_name = input(f'[task name]{EDIT_PROMPT}').strip()
     add_task(task_name)
 
+def remove_task(task_index):
+    task_valid = task_index >= 0 and task_index < len(tasks)
+    
+    if task_valid:
+        tasks.pop(task_index)
+
+def remove_task_prompt():
+    try:
+        task_index = int(input(f'[task 1]{EDIT_PROMPT}').strip())
+    except ValueError:
+        print('task index is invalid')
+        return
+
+    remove_task(task_index)
+
 def view_tasks():
     for task_id, task_name in enumerate(tasks):
         print(f'[{task_id}] {task_name}')
@@ -30,8 +45,8 @@ def swap_tasks_prompt():
     try:
         task_1 = int(input(f'[task 1]{EDIT_PROMPT}').strip())
         task_2 = int(input(f'[task 2]{EDIT_PROMPT}').strip())
-    except:
-        print('task numbers were invalid')
+    except ValueError:
+        print('task indices were invalid')
         return
 
     swap_tasks(task_1, task_2)
@@ -149,7 +164,8 @@ edit_commands   = {'help':help,
                    'normal':normal_mode,
                    'swap':swap_tasks_prompt,
                    'save':save_prompt,
-                   'wq':save_and_quit_prompt}
+                   'wq':save_and_quit_prompt,
+                   'remove':remove_task_prompt}
 
 if __name__ == '__main__':
     normal_mode()
