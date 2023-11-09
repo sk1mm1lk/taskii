@@ -32,6 +32,7 @@ def swap_tasks_prompt():
         task_2 = int(input(f'[task 2]{EDIT_PROMPT}').strip())
     except:
         print('task numbers were invalid')
+        return
 
     swap_tasks(task_1, task_2)
 
@@ -68,6 +69,24 @@ def save_and_quit_prompt():
     save_prompt()
     quit()
 
+def load_file(file_name):
+    try:
+        with open(file_name, 'r') as file:
+            file_contents = file.read()
+    except FileNotFoundError:
+        return
+
+    for line in file_contents.split("\n"):
+        if len(line) == 0:
+            continue
+
+        tasks.append(line.strip())
+
+def load_file_prompt():
+    file_name = input(f'[file name]{NORMAL_PROMPT}').strip()
+
+    load_file(file_name)
+
 def help():
     print("Normal mode commands:")
     for command in normal_commands.keys():
@@ -80,10 +99,6 @@ def help():
 # -- Normal mode functions --
 
 def normal_mode():
-    try:
-        print(is_editing)
-    except:
-        pass
     user_input = ''
     is_normal = True
 
@@ -99,7 +114,7 @@ def normal_command(command_input):
     try:
         normal_commands[command_input.strip()]()
     except KeyError:
-        pass
+        return
 
 # -- Edit mode functions --
 
@@ -119,14 +134,15 @@ def edit_command(command_input):
     try:
         edit_commands[command_input.strip()]()
     except KeyError:
-        pass
+        return
 
 normal_commands = {'help':help,
                    'view':view_tasks,
                    'edit':edit_mode,
                    'tick':tick_task_prompt,
                    'save':save_prompt,
-                   'wq':save_and_quit_prompt}
+                   'wq':save_and_quit_prompt,
+                   'load':load_file_prompt}
 edit_commands   = {'help':help,
                    'add':add_task_prompt,
                    'view':view_tasks,
