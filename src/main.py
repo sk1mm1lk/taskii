@@ -1,106 +1,20 @@
 #!/usr/bin/env python3
 
+import tasks as ts
+import basecli
+import exports
+
 QUIT          = ['quit', 'exit', 'q']
 NORMAL_PROMPT = '> '
 EDIT_PROMPT   = '# '
 
-tasks = []
+module_commands = [basecli.commands, exports.commands]
+module_parsers  = [basecli.parser,   exports.parser]
 
-def add_task(task_name):
-    tasks.append(task_name)
+tasks = ts.Tasks()
 
-def add_task_prompt():
-    task_name = input(f'[task name]{EDIT_PROMPT}').strip()
-    add_task(task_name)
-
-def remove_task(task_index):
-    task_valid = task_index >= 0 and task_index < len(tasks)
-    
-    if task_valid:
-        tasks.pop(task_index)
-
-def remove_task_prompt():
-    try:
-        task_index = int(input(f'[task 1]{EDIT_PROMPT}').strip())
-    except ValueError:
-        print('task index is invalid')
-        return
-
-    remove_task(task_index)
-
-def view_tasks():
-    for task_id, task_name in enumerate(tasks):
-        print(f'[{task_id}] {task_name}')
-
-def swap_tasks(task_1_index, task_2_index):
-    task_1_valid = task_1_index >= 0 and task_1_index < len(tasks)
-    task_2_valid = task_2_index >= 0 and task_2_index < len(tasks)
-
-    if task_1_valid and task_2_valid:
-        temp_task = tasks[task_1_index]
-        tasks[task_1_index] = tasks[task_2_index]
-        tasks[task_2_index] = temp_task
-
-def swap_tasks_prompt():
-    try:
-        task_1 = int(input(f'[task 1]{EDIT_PROMPT}').strip())
-        task_2 = int(input(f'[task 2]{EDIT_PROMPT}').strip())
-    except ValueError:
-        print('task indices were invalid')
-        return
-
-    swap_tasks(task_1, task_2)
-
-def tick_task(task_index):
-    task_valid = task_index >= 0 and task_index < len(tasks)
-
-    if task_valid:
-        tasks[task_index] = "[DONE] " + tasks[task_index]
-        swap_tasks(task_index, len(tasks)-1)
-
-def tick_task_prompt():
-    task_index = int(input(f'[task index]{NORMAL_PROMPT}').strip())
-    tick_task(task_index)
-
-def save(file_name):
-    tasks_string = ''
-
-    for task in tasks:
-        tasks_string = tasks_string + task + '\n'
-
-    with open(file_name, 'w') as file:
-        file.write(tasks_string)
-
-def save_prompt():
-    file_name = input(f'[file name]{NORMAL_PROMPT}').strip()
-
-    save(file_name)
-
-def save_and_quit(file_name):
-    save(file_name)
-    quit()
-
-def save_and_quit_prompt():
-    save_prompt()
-    quit()
-
-def load_file(file_name):
-    try:
-        with open(file_name, 'r') as file:
-            file_contents = file.read()
-    except FileNotFoundError:
-        return
-
-    for line in file_contents.split("\n"):
-        if len(line) == 0:
-            continue
-
-        tasks.append(line.strip())
-
-def load_file_prompt():
-    file_name = input(f'[file name]{NORMAL_PROMPT}').strip()
-
-    load_file(file_name)
+basecli.tasks = tasks
+exports.tasks = tasks
 
 def help():
     print("Normal mode commands:")
@@ -123,49 +37,29 @@ def normal_mode():
         if user_input in QUIT:
             quit()
 
-        normal_command(user_input)
+        run_command(user_input)
 
-def normal_command(command_input):
-    try:
-        normal_commands[command_input.strip()]()
-    except KeyError:
-        return
+def run_command(command_string):
+    stripped_string = command_string.strip()
+    command         = stripped_string.split(' ')[0].strip()
 
-# -- Edit mode functions --
+    module_index = match_command(command)
 
-def edit_mode():
-    user_input = ''
-    is_editing = True
+    if module_index >= 0:
+        module_parsers[module_index](stripped_string)
 
-    while is_editing:
-        user_input = input(EDIT_PROMPT)
+def match_command(command):
+    if command == 'help':
+        for command_set in module_commands:
+            for option in command_set:
+                print(f'- {option}')
+        return -1
 
-        if user_input in QUIT:
-            quit()
+    for module_index, module_data in enumerate(module_commands):
+        if command in module_data:
+            return module_index
 
-        edit_command(user_input)
-
-def edit_command(command_input):
-    try:
-        edit_commands[command_input.strip()]()
-    except KeyError:
-        return
-
-normal_commands = {'help':help,
-                   'view':view_tasks,
-                   'edit':edit_mode,
-                   'tick':tick_task_prompt,
-                   'save':save_prompt,
-                   'wq':save_and_quit_prompt,
-                   'load':load_file_prompt}
-edit_commands   = {'help':help,
-                   'add':add_task_prompt,
-                   'view':view_tasks,
-                   'normal':normal_mode,
-                   'swap':swap_tasks_prompt,
-                   'save':save_prompt,
-                   'wq':save_and_quit_prompt,
-                   'remove':remove_task_prompt}
+    return -1
 
 if __name__ == '__main__':
     normal_mode()
