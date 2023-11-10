@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 import tasks as ts
-import cparse as cpar
+import parser as ps
 
 NORMAL_PROMPT = '> '
 EDIT_PROMPT   = '# '
@@ -48,17 +48,9 @@ def tick_task_prompt():
     if tasks is not None:
         tasks.tick_task(task_index)
 
-command_dict = {'add':add_task_prompt,
-                'remove':remove_task_prompt,
-                'view':view_tasks,
-                'swap':swap_tasks_prompt,
-                'tick':tick_task_prompt}
-commands     = command_dict.keys()
-
-def parser(command_string):
-    command = cpar.get_command(command_string)
-    params  = cpar.get_params(command_string)
-
-    # TODO implement commands that take arguments
-    
-    command_dict[command]()
+parser = ps.Parser('basecli')
+parser.command_dict = {'add':add_task_prompt,
+                       'remove':remove_task_prompt,
+                       'view':view_tasks,
+                       'swap':swap_tasks_prompt,
+                       'tick':tick_task_prompt}

@@ -3,27 +3,18 @@
 import tasks as ts
 import basecli
 import exports
+import parser as ps
 
 QUIT          = ['quit', 'exit', 'q']
 NORMAL_PROMPT = '> '
 EDIT_PROMPT   = '# '
 
-module_commands = [basecli.commands, exports.commands]
-module_parsers  = [basecli.parser,   exports.parser]
-
-tasks = ts.Tasks()
-
-basecli.tasks = tasks
-exports.tasks = tasks
-
 def help():
-    print("Normal mode commands:")
-    for command in normal_commands.keys():
-        print(f'  {NORMAL_PROMPT}{command}')
-
-    print("Edit mode commands:")
-    for command in edit_commands.keys():
-        print(f'  {EDIT_PROMPT}{command}')
+    for parser in parsers.parsers:
+        print(f'---{parser.name}---')
+        for option in parser.get_commands():
+            print(f'- {option}')
+    return None
 
 # -- Normal mode functions --
 
@@ -32,7 +23,7 @@ def normal_mode():
     is_normal = True
 
     while is_normal:
-        user_input = input(NORMAL_PROMPT)
+        user_input = input(NORMAL_PROMPT).strip()
 
         if user_input in QUIT:
             quit()
@@ -43,23 +34,22 @@ def run_command(command_string):
     stripped_string = command_string.strip()
     command         = stripped_string.split(' ')[0].strip()
 
-    module_index = match_command(command)
+    module  = parsers.where_is(command)
 
-    if module_index >= 0:
-        module_parsers[module_index](stripped_string)
+    if module is not None:
+        try:
+            module.run(stripped_string)
+        except: # TODO proper exception
+            pass
 
-def match_command(command):
-    if command == 'help':
-        for command_set in module_commands:
-            for option in command_set:
-                print(f'- {option}')
-        return -1
+parsers = ps.Parser('main')
+parsers.command_dict = {'help':help}
+parsers.parsers = [basecli.parser,
+                   exports.parser]
 
-    for module_index, module_data in enumerate(module_commands):
-        if command in module_data:
-            return module_index
-
-    return -1
+tasks = ts.Tasks()
+basecli.tasks = tasks
+exports.tasks = tasks
 
 if __name__ == '__main__':
     normal_mode()

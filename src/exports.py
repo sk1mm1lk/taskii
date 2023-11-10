@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 import tasks as ts
-import cparse as cpar
+import parser as ps
 
 tasks = None
 
@@ -51,15 +51,7 @@ def load_file_prompt():
 
     load_file(file_name)
 
-command_dict = {'save':save_prompt,
-                'wq':save_and_quit_prompt,
-                'load':load_file_prompt}
-commands     = command_dict.keys()
-
-def parser(command_string):
-    command = cpar.get_command(command_string)
-    params  = cpar.get_params(command_string)
-
-    # TODO implement commands that take arguments
-    
-    command_dict[command]()
+parser = ps.Parser('exports')
+parser.command_dict = {'save':save_prompt,
+                       'wq':save_and_quit_prompt,
+                       'load':load_file_prompt}
