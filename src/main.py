@@ -4,6 +4,7 @@ import tasks as ts
 import basecli
 import exports
 import parser as ps
+import example
 
 QUIT          = ['quit', 'exit', 'q']
 NORMAL_PROMPT = '> '
@@ -45,11 +46,13 @@ def run_command(command_string):
 parsers = ps.Parser('main')
 parsers.command_dict = {'help':help}
 parsers.parsers = [basecli.parser,
-                   exports.parser]
+                   exports.parser,
+                   example.parser]
 
 tasks = ts.Tasks()
 basecli.tasks = tasks
 exports.tasks = tasks
+example.tasks = tasks
 
 if __name__ == '__main__':
     normal_mode()

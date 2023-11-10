@@ -51,7 +51,29 @@ def load_file_prompt():
 
     load_file(file_name)
 
+# --- CSV ---
+
+def as_csv(file_name):
+    if tasks is None:
+        return
+
+    print('as_csv')
+    tasks_string = 'task_id,task_name\n'
+
+    for task_id, task in enumerate(tasks.tasks):
+        tasks_string = tasks_string + f'{task_id},{task.name}\n'
+
+    with open(file_name, 'w') as file:
+        file.write(tasks_string)
+
+def as_csv_prompt():
+    file_name = input(f'[file name]> ').strip()
+
+    as_csv(file_name)
+
+
 parser = ps.Parser('exports')
 parser.command_dict = {'save':save_prompt,
                        'wq':save_and_quit_prompt,
-                       'load':load_file_prompt}
+                       'load':load_file_prompt,
+                       'as_csv':as_csv_prompt}
