@@ -28,6 +28,7 @@ def view_tasks():
     if tasks is None:
         return
 
+    # TODO Need to change this and swap_tasks to account for task_id property
     for task_id, task in enumerate(tasks.tasks):
         print(f'[{task_id}] {task.name}')
 
@@ -47,6 +48,11 @@ def tick_task_prompt():
     
     if tasks is not None:
         tasks.tick_task(task_index)
+
+# --- Task edit information ---
+
+def update_task_info_prompt():
+    # TODO prompt to update each item of information in a task
 
 parser = ps.Parser('basecli')
 parser.command_dict = {'add':add_task_prompt,

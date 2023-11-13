@@ -44,7 +44,7 @@ def load_file(file_name):
         if len(line) == 0:
             continue
 
-        tasks.append(line.strip())
+        tasks.add_task(line.strip())
 
 def load_file_prompt():
     file_name = input(f'[file name]> ').strip()
@@ -60,8 +60,8 @@ def as_csv(file_name):
     print('as_csv')
     tasks_string = 'task_id,task_name\n'
 
-    for task_id, task in enumerate(tasks.tasks):
-        tasks_string = tasks_string + f'{task_id},{task.name}\n'
+    for task in tasks.tasks:
+        tasks_string = tasks_string + f'{task.id},{task.name}\n'
 
     with open(file_name, 'w') as file:
         file.write(tasks_string)
